@@ -6,6 +6,9 @@ output:
   html_document:
     df_print: paged
 bibliography: references.bib
+csl: chicago.csl
+nocite: |
+  @peirce2007
 ---
 
 ```{r setup, echo=FALSE}
@@ -31,6 +34,12 @@ bronars_simulation_data <- read.csv("data/bronars_simulation_data.csv")
 Citation to original version of this data article:
 
 Nitsch, F. J., Sellitto, M., & Kalenscher, T. (2021). Trier social stress test and food-choice: Behavioral, self-report & hormonal data. Data in brief (**FIXME1**), *37*, 107245. <https://doi.org/10.1016/j.dib.2021.107245> (**FIXME2**)
+
+[@kirschbaum2007]
+
+[@peirce2007]
+
+@peirce2007
 
 **Abstract**
 
@@ -274,6 +283,6 @@ We thank Adam Schweda for helpful comments on the study design as well as assist
 
 [Download: Download zip file (1MB)](https://ars.els-cdn.com/content/image/1-s2.0-S2352340921005291-mmc1.zip)
 
-## References
+## References {#references}
 
 \
