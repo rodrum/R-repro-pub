@@ -8,9 +8,29 @@ output:
 bibliography: references.bib
 ---
 
+```{r setup, echo=FALSE}
+# globally change our working directory for entire document to be the root folder of
+# the project
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+# globally options for all chunks
+knitr::opts_chunk$set(result=FALSE, echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+```{r load-libraries-data}
+# Load libraries
+library(tidyverse)
+library(patchwork)
+library(BayesFactor)
+
+# Load data used on the project
+df <- read.csv("output/data/preprocessed-GARP-TSST-data.csv", 
+               encoding = "UTF-8")
+bronars_simulation_data <- read.csv("data/bronars_simulation_data.csv")
+```
+
 Citation to original version of this data article:
 
-Nitsch, F. J., Sellitto, M., & Kalenscher, T. (2021). Trier social stress test and food-choice: Behavioral, self-report & hormonal data. Data in brief (**FIXME1**), *37*, 107245. https://doi.org/10.1016/j.dib.2021.107245 (**FIXME2**)
+Nitsch, F. J., Sellitto, M., & Kalenscher, T. (2021). Trier social stress test and food-choice: Behavioral, self-report & hormonal data. Data in brief (**FIXME1**), *37*, 107245. <https://doi.org/10.1016/j.dib.2021.107245> (**FIXME2**)
 
 **Abstract**
 
@@ -51,11 +71,11 @@ Acute stress; Amylase Choice Consistency; Cortisol; Chronic StressFood-Choice; R
 | Related research article       | Nitsch, F. J., Sellitto, M., & Kalenscher, T. (2021). The effects of acute and chronic stress on choice consistency. Psychoneuroendocrinology, 131, 105289. <https://doi.org/10.1016/j.psyneuen.2021.105289>                                                                                                                                                                                                                                                                                                              |
 +--------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-## **Value of the Data** 
+## **Value of the Data**
 
 (**FIXME4**)
 
-The data are useful, as both the analysis of salivary cortisol for a relatively large sample as well as the implementation of an incentive-compatible behavioral task are expensive. Further, data sharing in the field of choice consistency/rationality is still relatively uncommon, making the aggregation of evidence   challenging @nitsch2020b
+The data are useful, as both the analysis of salivary cortisol for a relatively large sample as well as the implementation of an incentive-compatible behavioral task are expensive. Further, data sharing in the field of choice consistency/rationality is still relatively uncommon, making the aggregation of evidence challenging @nitsch2020b
 
 The data is valuable to researchers interested in the interplay of physiological and subjective stress. It enables exploratory data-analysis regarding individual differences in stress reactivity and mediators of the stress response.
 
@@ -67,28 +87,29 @@ The pre-processed data might be used for evidence aggregation in the field of ch
 
 This [OSF](https://osf.io/6mvq7/) directory contains the raw and processed data described, as well as analysis scripts required to computationally reproduce the results and plots reported in the *related research article*. The structure of the directory is:
 
-### Analysis 
-*modified for this workshop from the original directory structure in OSF
+### Analysis
+
+\*modified for this workshop from the original directory structure in OSF
 
 -   R Studio Project File
 
-    - code (contains all runnable R script files)
+    -   code (contains all runnable R script files)
 
-    - data (contains raw data)
-      
-      - food choice-data (contains raw data from food-choice task)
+    -   data (contains raw data)
 
-    - output (contains all generated output)
+        -   food choice-data (contains raw data from food-choice task)
 
-      - data (contains pre-processed data)
+    -   output (contains all generated output)
 
-      - plots (contains all plots)
-    
-    - report (contains all files for publication)
-      
-      - source (contains rmd file, figs, bibliography)
-      
-      - output (contains rendered html publication)
+        -   data (contains pre-processed data)
+
+        -   plots (contains all plots)
+
+    -   report (contains all files for publication)
+
+        -   source (contains rmd file, figs, bibliography)
+
+        -   output (contains rendered html publication)
 
 To repeat the analyses of the *related research article*, follow the instructions in the README file.
 
@@ -136,13 +157,11 @@ The dataset contains data of 144 participants. Participants did not have formal 
 
 Our food-choice task was administered following a 2 × 3 mixed-factorial design with Experimental Group (stress vs. control) as between-subject factor and Measurement (Baseline, Early, Late) as within-subject factor. We deployed a standard food-choice task similar to the one used by @harbaugh2001 and @chung2017 . In each trial, participants chose one out of a set of two to seven snack bundles. Each snack bundle consisted of specific amounts of a sweet or salty snack and a fruit or vegetable (see [Fig. 2]). The choice set was defined by all integer combinations of sweet or salty snack and fruit or vegetable on the budget-line. The budget-line was given by the following formula:
 
-(**FIXME7**)
-Amount (fruit/vegetable) = - px/py  Amount (sweet/salty) + m/py
+(**FIXME7**) Amount (fruit/vegetable) = - px/py Amount (sweet/salty) + m/py
 
 (**FIXME6**)
 
 [Fig.2 displays the choice sets of 4 example trials of the food-choice task. The economic parameters for these were for A: m = 4, px = 1, py = 1; for B: m = 2, px = 2, py = 1; for C: m = 2, px = 1, py = 2; for D: m = 5, px = 1, py = 1. The available snack bundles are then given by all integer combinations of both snack types along the budgetline. The budgetline is given by the formula:]
-
 
 At each of the three measurements, participants had to make decisions in 11 trials. The economic parameters ("px", "py", "m") of the 11 trials for each time point were randomly sampled from a collection of 22 possible parameter combinations (see file root/data/foodchoice_budgetlines.csv). The snacks for both categories were similarly attractive according to the previously provided online ratings of the participants (see file root/data/online_data_cleaned.xlsx). The sampling procedure was implemented to reduce interdependency of the answers of each participant for subsequent time points, while keeping the presented bundle size out of satiation range. At the end of the experiment, one trial was randomly selected for each participant, and their choice in that trial was implemented, i.e., participants received their chosen snack bundle. The experimental task was presented via PsychoPy @peirce2007. For 8 participants (out of N = 144 participants), no or incomplete food-choice data were saved due to a technical failure of the experimental hardware.
 
@@ -154,19 +173,80 @@ We collected saliva samples with Salivette devices (Sarstedt, Germany) that cons
 
 FIXME add Fig 3 - heart rate analysis
 
+```{r fig3, echo=FALSE, message=FALSE, warning=FALSE, results=FALSE}
+# library(tidyverse)
+# library(BayesFactor)
+# 
+# #Read data
+# df <- read.csv("../../output/data/preprocessed-GARP-TSST-data.csv", 
+#                encoding = "UTF-8")
+
+#Convert df to long-format
+df_long <- df %>%
+  pivot_longer(cols = c(HR_Baseline_Average, HR_TSST_Average),
+               names_to = "Measurement",
+               values_to = "HR")
+
+#Drop missing values
+df_long <- df_long %>% drop_na(HR)
+
+#Make sure columns are coded as factors for analysis
+df_long$VPN <- as.factor(df_long$VPN)
+df_long$Measurement <- as.factor(df_long$Measurement)
+df_long$Condition <- as.factor(df_long$Condition)
+
+#Bayesian Analysis
+BF <- anovaBF(formula = HR ~ Measurement*Condition + VPN,
+              data = df_long,
+              whichRandom = "VPN")
+
+#Evidence for interaction term
+BF_interaction <- BF[4]/BF[3]
+
+BF_interaction
+
+#Summarize to mean / SEM for plot
+df_long2 <- df_long %>%
+  group_by(Measurement, Condition) %>%
+  summarize(mean_value = mean(HR, na.rm = T),
+            sem = sd(HR, na.rm = T)/sqrt(n()))
+
+#Create plot
+plot <- ggplot(df_long2, aes(Measurement, mean_value, group = Condition, color = Condition)) +
+  geom_pointrange(aes(ymin=mean_value-sem, ymax= mean_value+sem)) +
+  geom_line() +
+  theme_classic() +
+  scale_x_discrete(labels = c("Baseline",
+                              "TSST-G/Control")) +
+  ylab("Mean Heartrate (BPM)") +
+  scale_colour_grey(start = 0.5, end = 0.2) +
+  theme(legend.position = "top")
+
+#Print and save plots  
+plot
+
+#ggsave("output/plots/heartrate.pdf", plot, width = 4, height = 3)
+
+```
 
 FIXME add Fig 4: Cortisol and Amylase levels in stress and control groups
 
+```{r}
+# run our code from code directory
+source("code/02_hormone_analysis.R", local=knitr::knit_global())
+# display
+plot
+```
 
 All analyses were conducted in R[^1] in the RStudio IDE[^2] using the packages Tidyverse (**add citation here**), stringi[^3], BayesFactor[^4] and patchwork[^5].
 
-[^1]: [<https://www.R-project.org/>](https://www.r-project.org/)
+[^1]: [\<https://www.R-project.org/\>](https://www.r-project.org/)
 
 [^2]: <https://www.rstudio.com/>
 
 [^3]: <https://stringi.gagolewski.com/>
 
-[^4]: [<https://CRAN.R-project.org/package=BayesFactor>](https://cran.r-project.org/package=BayesFactor)
+[^4]: [\<https://CRAN.R-project.org/package=BayesFactor\>](https://cran.r-project.org/package=BayesFactor)
 
 [^5]: <https://CRAN.R-project.org/package=patchwork>
 
@@ -194,6 +274,6 @@ We thank Adam Schweda for helpful comments on the study design as well as assist
 
 [Download: Download zip file (1MB)](https://ars.els-cdn.com/content/image/1-s2.0-S2352340921005291-mmc1.zip)
 
-##  References
+## References
 
 \
