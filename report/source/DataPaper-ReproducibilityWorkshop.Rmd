@@ -6,9 +6,9 @@ output:
   html_document:
     df_print: paged
 bibliography: references.bib
-csl: chicago.csl
+csl: begell-house-chicago-author-date.csl
 nocite: |
-  @peirce2007
+  @harbaugh2001
 ---
 
 ```{r setup, echo=FALSE}
@@ -31,7 +31,7 @@ df <- read.csv("output/data/preprocessed-GARP-TSST-data.csv",
 bronars_simulation_data <- read.csv("data/bronars_simulation_data.csv")
 ```
 
-Citation to original version of this data article:
+Citation to original version <!--# Wow, you can also insert comments?! --> of this data article:
 
 Nitsch, F. J., Sellitto, M., & Kalenscher, T. (2021). Trier social stress test and food-choice: Behavioral, self-report & hormonal data. Data in brief (**FIXME1**), *37*, 107245. <https://doi.org/10.1016/j.dib.2021.107245> (**FIXME2**)
 
